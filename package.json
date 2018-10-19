@@ -1,0 +1,15 @@
+{
+  "name": "workbench",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:u9520107/workbench",
+  "author": "Jack Tzu-Chieh Huang <u9520107@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "lerna": "^3.4.3"
+  }
+}
