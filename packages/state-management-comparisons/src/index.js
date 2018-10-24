@@ -10,7 +10,6 @@ const viewport = document.createElement('div');
 viewport.setAttribute('id', 'viewport');
 document.body.append(viewport);
 
-
 render(
   <Stage>
     <ReduxApp />

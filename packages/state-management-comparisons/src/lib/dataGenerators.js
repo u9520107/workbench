@@ -11,6 +11,7 @@ function* getContactGenerator(n = 1) {
       country: faker.address.country(),
       phoneNumber: faker.phone.phoneNumber(),
       company: faker.company.companyName(),
+      counter: 0,
     })) || 1;
   }
 }

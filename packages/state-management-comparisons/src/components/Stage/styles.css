@@ -24,3 +24,21 @@
   flex-grow: 1;
 }
 
+.runner {
+  width: 20px;
+  height: 20px;
+  animation-name: test;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  background-color: red;
+  animation-timing-function: linear;
+}
+
+@keyframes test {
+  from {
+    transform: rotateZ(0);
+  }
+  to {
+    transform: rotateZ(360deg);
+  }
+}

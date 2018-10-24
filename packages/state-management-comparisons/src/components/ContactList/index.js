@@ -1,7 +1,9 @@
 import React, { Component, PureComponent } from 'react';
+import { observer } from 'mobx-react';
 import styles from './styles.css';
 
-class ContactItem extends PureComponent {
+@observer
+class ContactItem extends Component {
   render() {
     const {
       contact: {
@@ -11,9 +13,10 @@ class ContactItem extends PureComponent {
         phoneNumber,
         country,
         company,
+        counter,
       },
       remove,
-      // update,
+      update,
     } = this.props;
     return (
       <div className={styles.item}>
@@ -22,6 +25,8 @@ class ContactItem extends PureComponent {
         <div>Phone Number: {phoneNumber}</div>
         <div>Copmpany: {company}</div>
         <div>Country: {country}</div>
+        <div>Counter: {counter}</div>
+        <button onClick={() => update({ id, counter: counter + 1 })}>Like</button>
         <button onClick={() => remove({ id })}>Remove Contact</button>
       </div>
     );
@@ -33,7 +38,7 @@ export default function ContactList({
   contacts = [],
   add,
   remove,
-  // update,
+  update,
   load,
 }) {
   const content = contacts.length ?
@@ -42,7 +47,7 @@ export default function ContactList({
         key={item.id}
         contact={item}
         remove={remove}
-      // update={update}
+        update={update}
       />
     ))) :
     (<button onClick={load}>Load Contacts</button>);

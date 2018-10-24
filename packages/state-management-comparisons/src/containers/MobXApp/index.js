@@ -25,7 +25,7 @@ export default function MobXApp({
   add = () => store.addContact(contactGenerator.next().value[0]),
   load = () => store.loadContacts(contactGenerator.next(1000).value),
   remove = contact => store.removeContact(contact),
-  update = contact => store.updateContact(contact),
+  update = async contact => store.updateContact(contact),
 }) {
   return (
     <ContactListContainer
