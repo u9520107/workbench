@@ -7,7 +7,7 @@ import ContactList from '../../components/ContactList';
 @observer
 class ContactListContainer extends Component {
   render() {
-    const { store, add, remove, update, load } = this.props;
+    const { store, add, remove, update, load, virtual } = this.props;
     return (
       <ContactList
         title="MobX"
@@ -16,6 +16,7 @@ class ContactListContainer extends Component {
         remove={remove}
         update={update}
         load={load}
+        virtual={virtual}
       />
     );
   }

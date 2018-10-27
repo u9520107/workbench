@@ -5,6 +5,3 @@
   display: block;
 }
 
-:global * {
-  box-sizing: border-box;
-}

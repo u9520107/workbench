@@ -62,6 +62,7 @@ export default function ReduxApp({
   load,
   remove,
   update,
+  virtual
 }) {
   return (
     <Provider store={store}>
@@ -71,6 +72,7 @@ export default function ReduxApp({
         load={load}
         remove={remove}
         update={update}
+        virtual={virtual}
       />
     </Provider>
   );
