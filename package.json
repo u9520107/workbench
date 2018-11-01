@@ -5,6 +5,9 @@
   "author": "Jack Tzu-Chieh Huang <u9520107@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "start": "yarn lerna run start --stream"
+  },
   "workspaces": [
     "packages/*"
   ],

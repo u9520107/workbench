@@ -14,7 +14,6 @@
 import React, { useRef, useLayoutEffect } from "react";
 import classnames from "classnames";
 import raf from "raf";
-import useSize from "../useSize";
 import styles from "./styles.css";
 
 function resetTriggers({
@@ -51,12 +50,11 @@ export default function useAutoSizeContainer() {
     expandChild,
     contractTrigger
   } = domRefs.current;
-  const [{ width, height }, setSize] = useSize();
   useLayoutEffect(() => {
     resetTriggers(domRefs.current);
   });
   if (!state.current.component) {
-    state.current.component = ({ children, className }) => (
+    state.current.component = ({ children, className, onResize }) => (
       <div
         ref={container}
         className={classnames(styles.container, className)}
@@ -77,10 +75,12 @@ export default function useAutoSizeContainer() {
               ) {
                 state.current.width = container.current.offsetWidth;
                 state.current.height = container.current.offsetHeight;
-                setSize({
-                  width: state.current.width,
-                  height: state.current.height
-                });
+                if (typeof onResize === "function") {
+                  onResize({
+                    width: state.current.width,
+                    height: state.current.height
+                  });
+                }
               }
             });
           }
@@ -103,5 +103,5 @@ export default function useAutoSizeContainer() {
       </div>
     );
   }
-  return [state.current.component, width, height];
+  return state.current.component;
 }
