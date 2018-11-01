@@ -52,7 +52,7 @@ export default function useAutoSizeContainer() {
   } = domRefs.current;
   useLayoutEffect(() => {
     resetTriggers(domRefs.current);
-  });
+  }, []); // only run on mount
   if (!state.current.component) {
     state.current.component = ({ children, className, onResize }) => (
       <div
