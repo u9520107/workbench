@@ -16,92 +16,94 @@ import classnames from "classnames";
 import raf from "raf";
 import styles from "./styles.css";
 
-function resetTriggers({
-  expandTrigger: { current: expandTrigger },
-  expandChild: { current: expandChild },
-  contractTrigger: { current: contractTrigger }
-}) {
-  if (expandTrigger && expandChild && contractTrigger) {
-    contractTrigger.scrollLeft = contractTrigger.scrollWidth;
-    contractTrigger.scrollTop = contractTrigger.scrollHeight;
-    expandChild.style.width = expandTrigger.offsetWidth + 1 + "px";
-    expandChild.style.height = expandTrigger.offsetHeight + 1 + "px";
-    expandTrigger.scrollLeft = expandTrigger.scrollWidth;
-    expandTrigger.scrollTop = expandTrigger.scrollHeight;
-  }
-}
-
 export default function useAutoSizeContainer() {
-  const state = useRef({
-    width: null,
-    height: null,
-    handle: null,
-    component: null
-  });
-  const domRefs = useRef({
-    container: useRef(null),
-    expandTrigger: useRef(null),
-    expandChild: useRef(null),
-    contractTrigger: useRef(null)
-  });
-  const {
-    container,
-    expandTrigger,
-    expandChild,
-    contractTrigger
-  } = domRefs.current;
+  const state = useRef(null);
+  const container = useRef(null);
+  const expandTrigger = useRef(null);
+  const expandChild = useRef(null);
+  const contractTrigger = useRef(null);
   useLayoutEffect(() => {
-    resetTriggers(domRefs.current);
+    state.current.resetTriggers();
   }, []); // only run on mount
-  if (!state.current.component) {
-    state.current.component = ({ children, className, onResize }) => (
-      <div
-        ref={container}
-        className={classnames(styles.container, className)}
-        onScrollCapture={({ target }) => {
-          if (
-            (expandTrigger.current && expandTrigger.current === target) ||
-            (contractTrigger.current && contractTrigger.current === target)
-          ) {
-            resetTriggers(domRefs.current);
-            if (state.current.handle) {
-              raf.cancel(state.current.handle);
-            }
-            state.current.handle = raf(() => {
-              if (
-                container.current &&
-                (container.current.offsetWidth !== state.current.width ||
-                  container.current.offsetHeight !== state.current.height)
-              ) {
-                state.current.width = container.current.offsetWidth;
-                state.current.height = container.current.offsetHeight;
-                if (typeof onResize === "function") {
-                  onResize({
-                    width: state.current.width,
-                    height: state.current.height
-                  });
-                }
-              }
+  if (!state.current) {
+    state.current = {
+      width: null,
+      height: null,
+      handle: null,
+      component({ children, className, onResize }) {
+        state.current.onResize = onResize;
+        return (
+          <div
+            ref={container}
+            className={classnames(styles.container, className)}
+            onScrollCapture={state.current.onScrollCapture}
+          >
+            <div>{children}</div>
+            <div
+              className={styles.resizeTriggers}
+              onAnimationStart={state.current.onAnimationStart}
+            >
+              <div ref={expandTrigger} className={styles.expandTrigger}>
+                <div ref={expandChild} />
+              </div>
+              <div ref={contractTrigger} className={styles.contractTrigger} />
+            </div>
+          </div>
+        );
+      },
+      onScrollCapture({ target }) {
+        if (
+          (expandTrigger.current && expandTrigger.current === target) ||
+          (contractTrigger.current && contractTrigger.current === target)
+        ) {
+          state.current.resetTriggers();
+          if (state.current.handle) {
+            raf.cancel(state.current.handle);
+          }
+          state.current.handle = raf(state.current.checkTriggers);
+        }
+      },
+      resetTriggers() {
+        if (
+          expandTrigger.current &&
+          expandChild.current &&
+          contractTrigger.current
+        ) {
+          contractTrigger.current.scrollLeft =
+            contractTrigger.current.scrollWidth;
+          contractTrigger.current.scrollTop =
+            contractTrigger.current.scrollHeight;
+          expandChild.current.style.width =
+            expandTrigger.current.offsetWidth + 1 + "px";
+          expandChild.current.style.height =
+            expandTrigger.current.offsetHeight + 1 + "px";
+          expandTrigger.current.scrollLeft = expandTrigger.current.scrollWidth;
+          expandTrigger.current.scrollTop = expandTrigger.current.scrollHeight;
+        }
+      },
+      checkTriggers() {
+        if (
+          container.current &&
+          (container.current.offsetWidth !== state.current.width ||
+            container.current.offsetHeight !== state.current.height)
+        ) {
+          state.current.width = container.current.offsetWidth;
+          state.current.height = container.current.offsetHeight;
+          if (typeof state.current.onResize === "function") {
+            state.current.onResize({
+              width: state.current.width,
+              height: state.current.height
             });
           }
-        }}
-      >
-        <div>{children}</div>
-        <div
-          className={styles.resizeTriggers}
-          onAnimationStart={({ animationName }) => {
-            if (animationName === styles.animationName) {
-              resetTriggers(domRefs);
-            }
-          }}
-        >
-          <div ref={expandTrigger} className={styles.expandTrigger}>
-            <div ref={expandChild} />
-          </div>
-          <div ref={contractTrigger} className={styles.contractTrigger} />
-        </div>
-      </div>
-    );
+        }
+      },
+      onResize: null,
+      onAnimationStart({ animationName }) {
+        if (animationName === styles.animationName) {
+          state.current.resetTriggers();
+        }
+      }
+    };
   }
   return state.current.component;
 }
