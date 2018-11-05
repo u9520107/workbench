@@ -16,7 +16,7 @@ import classnames from "classnames";
 import raf from "raf";
 import styles from "./styles.css";
 
-export default function useAutoSizeContainer() {
+export default function AutoSizeContainer({ onResize, children, className }) {
   const state = useRef(null);
   const container = useRef(null);
   const expandTrigger = useRef(null);
@@ -30,27 +30,6 @@ export default function useAutoSizeContainer() {
       width: null,
       height: null,
       handle: null,
-      component({ children, className, onResize }) {
-        state.current.onResize = onResize;
-        return (
-          <div
-            ref={container}
-            className={classnames(styles.container, className)}
-            onScrollCapture={state.current.onScrollCapture}
-          >
-            <div>{children}</div>
-            <div
-              className={styles.resizeTriggers}
-              onAnimationStart={state.current.onAnimationStart}
-            >
-              <div ref={expandTrigger} className={styles.expandTrigger}>
-                <div ref={expandChild} />
-              </div>
-              <div ref={contractTrigger} className={styles.contractTrigger} />
-            </div>
-          </div>
-        );
-      },
       onScrollCapture({ target }) {
         if (
           (expandTrigger.current && expandTrigger.current === target) ||
@@ -105,5 +84,23 @@ export default function useAutoSizeContainer() {
       }
     };
   }
-  return state.current.component;
+  state.current.onResize = onResize;
+  return (
+    <div
+      ref={container}
+      className={classnames(styles.container, className)}
+      onScrollCapture={state.current.onScrollCapture}
+    >
+      <div>{children}</div>
+      <div
+        className={styles.resizeTriggers}
+        onAnimationStart={state.current.onAnimationStart}
+      >
+        <div ref={expandTrigger} className={styles.expandTrigger}>
+          <div ref={expandChild} />
+        </div>
+        <div ref={contractTrigger} className={styles.contractTrigger} />
+      </div>
+    </div>
+  );
 }

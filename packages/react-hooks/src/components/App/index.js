@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import styles from "./styles.css";
 
-import useAutoSizeContainer from "../../hooks/useAutoSizeContainer";
+import AutoResizeContainer from "../AutoResizeContainer";
 import useSize from "../../hooks/useSize";
 
 function AutoSizingHelloWorld() {
-  const Container = useAutoSizeContainer();
   const [{ width, height }, setSize] = useSize();
   return (
-    <Container onResize={setSize}>
+    <AutoResizeContainer onResize={setSize}>
       <HelloWorld width={width} height={height} />
-    </Container>
+    </AutoResizeContainer>
   );
 }
 
